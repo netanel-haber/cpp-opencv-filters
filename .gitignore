@@ -1,5 +1,5 @@
 *.out
 .vscode/**
 build/**
-opencv-4.9.0/**
 output/**
+!c_cpp_properties.json
