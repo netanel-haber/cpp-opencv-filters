@@ -12,6 +12,6 @@ void cv_median_filter(path in, path out){
 
 
 int main(){
-    std::cout << "hello world";
+    std::cout << "hello world" << std::endl;
     cv_median_filter(INPUT_MEDIAN, OUTPUT_MEDIAN);
 }
