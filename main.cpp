@@ -7,11 +7,12 @@ using path = std::filesystem::path;
 
 static constexpr auto INPUT_MEDIAN = "../input-median.png";
 static constexpr auto OUTPUT_MEDIAN = "./median.png";
+static constexpr auto KSIZE = 3;
 
-void cv_median_filter(path in, path out)
+void cv_median_filter(path in, path out, int ksize = KSIZE)
 {
     auto image = cvutils::read_grayscale(INPUT_MEDIAN);
-    cvutils::print_image_size(image);
+    cvutils::filter_to_file(image, OUTPUT_MEDIAN, cv::medianBlur, ksize);
 }
 
 int main()
