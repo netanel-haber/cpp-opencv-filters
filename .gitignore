@@ -3,3 +3,4 @@
 build/**
 output/**
 !c_cpp_properties.json
+Open_CV/**
