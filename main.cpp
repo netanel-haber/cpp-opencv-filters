@@ -15,5 +15,9 @@ int main()
     auto fabio_input = cvutils::read_grayscale("../input-fabio.png");
     dst = fabio_input.clone();
     GaussianBlur(fabio_input, dst, Size{KSIZE, KSIZE}, 0);
-    imwrite("./fabio.png", dst);
+    imwrite("./gaussian.png", dst);
+
+    dst = fabio_input.clone();
+    Laplacian(fabio_input, dst, -1, 5);
+    imwrite("./laplacian.png", dst);
 }
