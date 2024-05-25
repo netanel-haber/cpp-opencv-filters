@@ -4,13 +4,13 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/Open_CV/"
+                "/usr/local/include/opencv4"
             ],
             "defines": [],
-            "compilerPath": "/opt/homebrew/bin/g++-14",
+            "compilerPath": "/usr/bin/clang++",
             "cStandard": "c17",
             "cppStandard": "gnu++17",
-            "intelliSenseMode": "macos-gcc-arm64"
+            "intelliSenseMode": "macos-clang-arm64"
         }
     ],
     "version": 4
