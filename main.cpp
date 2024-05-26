@@ -2,12 +2,14 @@
 
 #include "opencv2/highgui/highgui.hpp"
 
-auto static constexpr KSIZE = 11;
+auto static constexpr KSIZE = 3;
+static_assert(KSIZE % 2 == 1);
 
 void cv_filters(std::string outputMedian, std::string outputGaussian, std::string outputLaplacian)
 {
+    cv::Mat dst;
     auto median_input = cvutils::read_grayscale("../input-median.png");
-    auto dst = median_input.clone();
+    dst = median_input.clone();
     medianBlur(median_input, dst, KSIZE);
     imwrite(outputMedian, dst);
 
@@ -25,7 +27,7 @@ void our_filters(std::string outputMedian, std::string outputGaussian, std::stri
 {
     auto median_input = cvutils::read_grayscale("../input-median.png");
     auto dst = cvutils::median_blur(median_input, KSIZE);
-    cvutils::show_image(dst);
+    imwrite(outputMedian, dst);
 }
 
 int main()

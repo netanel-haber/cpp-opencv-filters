@@ -10,18 +10,18 @@
 
 namespace cvutils
 {
-using namespace cv;
+using Img = cv::Mat;
 
 auto constexpr WINDOW_NAME = "Display Image";
-void show_image(const Mat& img)
+void show_image(const Img& img)
 {
-    imshow(WINDOW_NAME, img);
-    waitKey(3000);
+    cv::imshow(WINDOW_NAME, img);
+    cv::waitKey(3000);
 }
 
-Mat read_grayscale(std::filesystem::path img)
+Img read_grayscale(std::filesystem::path img)
 {
-    auto image = imread(img, IMREAD_GRAYSCALE);
+    auto image = cv::imread(img, cv::IMREAD_GRAYSCALE);
     if (image.empty())
     {
         std::cout << "Could not read the image: " << img << std::endl;
@@ -31,38 +31,50 @@ Mat read_grayscale(std::filesystem::path img)
     return image;
 }
 
-Mat pad(const Mat& src, int ksize)
+Img pad(const Img& src, int ksize)
 {
     auto border = (ksize - 1) / 2;
-    Mat padded;
-    copyMakeBorder(src, padded, border, border, border, border, BORDER_CONSTANT, 0);
+    Img padded;
+    cv::copyMakeBorder(src, padded, border, border, border, border, cv::BORDER_CONSTANT, 0);
     assert((src.rows + (border * 2)) == padded.rows);
     assert((src.cols + (border * 2)) == padded.cols);
-
     return padded;
 }
 
-Mat median_blur(const Mat& src, int ksize)
+/*
+Median for even number of elements cannot use `nth_element`, it needs a mean of the two middle elements.
+We take advantage of kernels always being odd sized=odd number of elements.
+*/
+int mutating_median_odd_vector(std::vector<uint8_t>& v)
 {
-    Mat dst = src.clone();
-    Mat padded = pad(src, ksize);
+    auto size = v.size();
+    assert(size % 2 == 1);
+    size_t n = size / 2;
+    std::nth_element(v.begin(), v.begin() + n, v.end());
+    return v[n];
+}
+
+Img median_blur(const Img& src, int ksize)
+{
+    Img dst = src.clone();
+    Img padded = pad(src, ksize);
+
+    auto kernel_size = ksize * ksize;
+    std::vector<uint8_t> kernel = std::vector<uint8_t>(kernel_size);
 
     auto padding = (ksize - 1) / 2;
+
     for (auto r = padding; r < padded.rows - padding; r++)
     {
         for (auto c = padding; c < padded.cols - padding; c++)
         {
-            int sum = 0;
-            for (auto i = r - padding; i < r + padding + 1; i++)
-            {
-                for (auto j = c - padding; j < c + padding + 1; j++)
-                {
-                    sum += padded.at<uint8_t>(i, j);
-                }
-            }
-            dst.at<uint8_t>(r - padding, c - padding) = sum / (ksize * ksize);
+            for (auto i = 0; i < kernel_size; i++)
+                kernel[i] = padded.at<uint8_t>(r + floor(i / ksize), c + (i % ksize));
+            dst.at<uint8_t>(r - padding, c - padding) = mutating_median_odd_vector(kernel);
         }
     }
     return dst;
 }
+
+
 }
