@@ -6,6 +6,8 @@
 #include <assert.h>
 #include <stddef.h>
 #include <iostream>
+#include <numeric>
+#include "./gaussian_kernels.hpp"
 
 
 namespace cvutils
@@ -47,14 +49,14 @@ Img op_on_windows(const Img& src, int ksize, std::function<uint8_t(std::vector<u
     auto padded = pad(src, ksize);
     auto padding = (ksize - 1) / 2;
     auto klength = ksize * ksize;
-    auto collector = std::vector<uint8_t>(klength);
+    auto window = std::vector<uint8_t>(klength);
     for (auto r = padding; r < padded.rows - padding; r++)
     {
         for (auto c = padding; c < padded.cols - padding; c++)
         {
             for (auto i = 0; i < klength; i++)
-                collector[i] = padded.at<uint8_t>(r + floor(i / ksize), c + (i % ksize));
-            dst.at<uint8_t>(r - padding, c - padding) = operation_on_window(collector);
+                window[i] = padded.at<uint8_t>(r + floor(i / ksize), c + (i % ksize));
+            dst.at<uint8_t>(r - padding, c - padding) = operation_on_window(window);
         }
     }
     return dst;
@@ -66,11 +68,23 @@ We take advantage of kernels always being odd sized=odd number of elements.
 */
 Img median_blur(const Img& src, int ksize)
 {
-    auto klength = ksize * ksize;
-    auto n = klength / 2;
-    return op_on_windows(src, ksize, [n](auto v) {
-        std::nth_element(v.begin(), v.begin() + n, v.end());
-        return v[n];
+    auto medianth_index = (ksize * ksize) / 2;
+    return op_on_windows(src, ksize, [medianth_index](auto window) {
+        std::nth_element(window.begin(), window.begin() + medianth_index, window.end());
+        return window[medianth_index];
         });
 }
+
+Img convolve(const Img& src, const std::vector<float>& kernel) {
+    auto ksize = static_cast<int>(floor(sqrt(kernel.size())));
+    return op_on_windows(src, ksize, [kernel](auto window) {
+        return std::inner_product(window.begin(), window.end(), kernel.begin(), 0);
+        });
+}
+
+Img gaussian_blur(const Img& src, int ksize) {
+    auto kernel = produce_gaussian_kernel(ksize);
+    return convolve(src, kernel);
+}
+
 }

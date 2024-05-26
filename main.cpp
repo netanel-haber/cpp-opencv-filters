@@ -25,9 +25,14 @@ void cv_filters(std::string outputMedian, std::string outputGaussian, std::strin
 
 void our_filters(std::string outputMedian, std::string outputGaussian, std::string outputLaplacian)
 {
+    cv::Mat dst;
     auto median_input = cvutils::read_grayscale("../input-median.png");
-    auto dst = cvutils::median_blur(median_input, KSIZE);
+    dst = cvutils::median_blur(median_input, KSIZE);
     imwrite(outputMedian, dst);
+
+    auto fabio_input = cvutils::read_grayscale("../input-fabio.png");
+    dst = cvutils::gaussian_blur(fabio_input, KSIZE);
+    imwrite(outputGaussian, dst);
 }
 
 int main()
