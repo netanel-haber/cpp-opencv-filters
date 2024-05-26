@@ -41,40 +41,36 @@ Img pad(const Img& src, int ksize)
     return padded;
 }
 
-/*
-Median for even number of elements cannot use `nth_element`, it needs a mean of the two middle elements.
-We take advantage of kernels always being odd sized=odd number of elements.
-*/
-int mutating_median_odd_vector(std::vector<uint8_t>& v)
+Img op_on_windows(const Img& src, int ksize, std::function<uint8_t(std::vector<uint8_t>&)> operation_on_window)
 {
-    auto size = v.size();
-    assert(size % 2 == 1);
-    size_t n = size / 2;
-    std::nth_element(v.begin(), v.begin() + n, v.end());
-    return v[n];
-}
-
-Img median_blur(const Img& src, int ksize)
-{
-    Img dst = src.clone();
-    Img padded = pad(src, ksize);
-
-    auto kernel_size = ksize * ksize;
-    std::vector<uint8_t> kernel = std::vector<uint8_t>(kernel_size);
-
+    auto dst = src.clone();
+    auto padded = pad(src, ksize);
     auto padding = (ksize - 1) / 2;
-
+    auto klength = ksize * ksize;
+    auto collector = std::vector<uint8_t>(klength);
     for (auto r = padding; r < padded.rows - padding; r++)
     {
         for (auto c = padding; c < padded.cols - padding; c++)
         {
-            for (auto i = 0; i < kernel_size; i++)
-                kernel[i] = padded.at<uint8_t>(r + floor(i / ksize), c + (i % ksize));
-            dst.at<uint8_t>(r - padding, c - padding) = mutating_median_odd_vector(kernel);
+            for (auto i = 0; i < klength; i++)
+                collector[i] = padded.at<uint8_t>(r + floor(i / ksize), c + (i % ksize));
+            dst.at<uint8_t>(r - padding, c - padding) = operation_on_window(collector);
         }
     }
     return dst;
 }
 
-
+/*
+Median for even number of elements cannot use `nth_element`, it needs a mean of the two middle elements.
+We take advantage of kernels always being odd sized=odd number of elements.
+*/
+Img median_blur(const Img& src, int ksize)
+{
+    auto klength = ksize * ksize;
+    auto n = klength / 2;
+    return op_on_windows(src, ksize, [n](auto v) {
+        std::nth_element(v.begin(), v.begin() + n, v.end());
+        return v[n];
+        });
+}
 }
