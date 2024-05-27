@@ -11,26 +11,8 @@
 
 #include "./gaussian_kernels.hpp"
 
-namespace cvutils {
+namespace {
 using Img = cv::Mat;
-
-auto constexpr WINDOW_NAME = "Display Image";
-void show_image(const Img& img) {
-  cv::imshow(WINDOW_NAME, img);
-  cv::waitKey(3000);
-}
-
-Img read_grayscale(std::filesystem::path img) {
-  auto image = cv::imread(img, cv::IMREAD_GRAYSCALE);
-  if (image.empty())
-  {
-    std::cout << "Could not read the image: " << img << std::endl;
-    exit(EXIT_FAILURE);
-  }
-  assert(image.channels() == 1);
-  return image;
-}
-
 Img pad(const Img& src, int ksize) {
   auto border = (ksize - 1) / 2;
   Img padded;
@@ -57,6 +39,27 @@ Img op_on_windows(const Img& src, int ksize, std::function<uint8_t(std::vector<u
   }
   return dst;
 }
+Img convolve(const Img& src, const std::vector<float>& kernel) {
+  auto ksize = static_cast<int>(floor(sqrt(kernel.size())));
+  return op_on_windows(src, ksize, [kernel](auto window) {
+    auto product = std::inner_product(window.begin(), window.end(), kernel.begin(), 0);
+    return product;
+  });
+}
+} // namespace
+
+namespace cvutils {
+using Img = cv::Mat;
+Img read_grayscale(std::filesystem::path img) {
+  auto image = cv::imread(img, cv::IMREAD_GRAYSCALE);
+  if (image.empty())
+  {
+    std::cout << "Could not read the image: " << img << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  assert(image.channels() == 1);
+  return image;
+}
 
 /*
 Median for even number of elements cannot use `nth_element`, it needs a mean of
@@ -69,14 +72,6 @@ Img median_blur(const Img& src, int ksize) {
   return op_on_windows(src, ksize, [medianth_index](auto window) {
     std::nth_element(window.begin(), window.begin() + medianth_index, window.end());
     return window[medianth_index];
-  });
-}
-
-Img convolve(const Img& src, const std::vector<float>& kernel) {
-  auto ksize = static_cast<int>(floor(sqrt(kernel.size())));
-  return op_on_windows(src, ksize, [kernel](auto window) {
-    auto product = std::inner_product(window.begin(), window.end(), kernel.begin(), 0);
-    return product;
   });
 }
 

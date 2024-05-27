@@ -33,7 +33,6 @@ void our_filters(std::string outputMedian, std::string outputGaussian, std::stri
 }
 
 int main() {
-  cv::namedWindow(cvutils::WINDOW_NAME);
   cv_filters("./median.png", "./gaussian.png", "./laplacian.png");
   our_filters("./our_median.png", "./our_gaussian.png", "./our_laplacian.png");
 }
