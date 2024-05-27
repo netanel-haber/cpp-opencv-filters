@@ -1,0 +1,79 @@
+---
+BasedOnStyle: Google
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+ColumnLimit: 120
+
+# Indentation
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterControlStatement: true
+  AfterEnum: false
+  AfterFunction: false
+  AfterNamespace: false
+  AfterObjCDeclaration: false
+  AfterStruct: false
+  AfterUnion: false
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+
+# Spaces
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesInAngles: false
+SpacesInContainerLiterals: true
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# Break before braces
+BreakBeforeBraces: Custom
+BreakBeforeFunction: Allman
+BreakBeforeEnum: Allman
+BreakBeforeStruct: Allman
+BreakBeforeClass: Allman
+BreakBeforeBlock: Allman
+BreakBeforeLambda: Allman
+SplitEmptyFunction: false
+SplitEmptyRecord: false
+
+# Alignment
+AlignAfterOpenBracket: DontAlign
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: Right
+AlignOperands: true
+AlignTrailingComments: true
+
+# Spaces within
+SpacesWithinParentheses: false
+SpacesWithinSquareBrackets: false
+SpacesWithinAngles: false
+SpacesWithinCStyleCastParentheses: false
+SpacesInEmptyParentheses: false
+
+# Other
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+PointerAlignment: Left
+ReferenceAlignment: Left
+SpaceBeforeSquareBrackets: false
+SpaceAfterControlStatementKeyword: true
+SpaceBeforeLambdaOpenParens: false
+SpaceBeforeCpp11BracedList: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeBinaryOperators: true
+SpaceAfterUnaryOperators: true
+SpaceAfterComma: true
+SpaceBeforeComma: false
+SpaceAfterCStyleCast: false
+SpacesBeforeTrailingComments: 1
+Cpp11BracedListStyle: true
