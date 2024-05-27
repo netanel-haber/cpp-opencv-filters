@@ -22,7 +22,7 @@ constexpr std::array<float, N> normalize_kernel(const std::array<uint8_t, N>& ke
 // clang-format off
 constexpr std::array<uint8_t, 9> gaussian3x3 = {
     1, 2, 1,
-    2, 40, 2,
+    2, 4, 2,
     1, 2, 1
 };
 
@@ -69,6 +69,24 @@ constexpr std::array<uint8_t, 121> gaussian11x11 = {
     2,  5,  9, 18, 26, 28, 26, 18,  9,  5,  2,
     1,  2,  4,  8, 11, 12, 11,  8,  4,  2,  1
 };
+
+// To compare if the kernel actually blurs:
+// * Set KSIZE to 11.
+// * Set cv sigmax and sigmay to 100 or so.
+// * Comment the above 11x11 and uncomment below:
+// constexpr std::array<uint8_t, 121> gaussian11x11 = {
+//     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+// };
 // clang-format on
 
 auto constexpr normalized3X3 = normalize_kernel(gaussian3x3);
@@ -99,7 +117,7 @@ constexpr std::array<const float*, MAX_GAUSSIAN_KSIZE + 1> gaussian_kernel_looku
 } // namespace
 
 std::vector<float> gaussian_kernel(int ksize) {
-  assert(ksize <= 3);
+  assert(ksize >= 3);
   assert(ksize <= MAX_GAUSSIAN_KSIZE);
   assert(ksize % 2 == 1);
 

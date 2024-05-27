@@ -13,7 +13,7 @@ void cv_filters(std::string outputMedian, std::string outputGaussian, std::strin
 
   auto fabio_input = cvutils::read_grayscale("input-fabio.png");
   dst = fabio_input.clone();
-  GaussianBlur(fabio_input, dst, cv::Size {KSIZE, KSIZE}, 0);
+  GaussianBlur(fabio_input, dst, cv::Size {KSIZE, KSIZE}, 1, 1);
   imwrite(outputGaussian, dst);
 
   dst = fabio_input.clone();
