@@ -121,7 +121,7 @@ std::vector<float> gaussian_kernel(int ksize) {
   assert(ksize <= MAX_GAUSSIAN_KSIZE);
   assert(ksize % 2 == 1);
 
-  const float* kernel = gaussian_kernel_lookup[ksize];
+  auto kernel = gaussian_kernel_lookup[ksize];
   if (!kernel)
     throw std::runtime_error("The asserts above should have caught this...");
 

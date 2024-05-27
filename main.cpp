@@ -1,7 +1,7 @@
 #include "./utils.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
-auto static constexpr KSIZE = 3;
+auto static constexpr KSIZE = 11;
 static_assert(KSIZE % 2 == 1);
 
 void cv_filters(std::string outputMedian, std::string outputGaussian, std::string outputLaplacian) {
@@ -13,7 +13,7 @@ void cv_filters(std::string outputMedian, std::string outputGaussian, std::strin
 
   auto fabio_input = cvutils::read_grayscale("input-fabio.png");
   dst = fabio_input.clone();
-  GaussianBlur(fabio_input, dst, cv::Size {KSIZE, KSIZE}, 1, 1);
+  GaussianBlur(fabio_input, dst, cv::Size {KSIZE, KSIZE}, 100, 100);
   imwrite(outputGaussian, dst);
 
   dst = fabio_input.clone();
@@ -30,6 +30,9 @@ void our_filters(std::string outputMedian, std::string outputGaussian, std::stri
   auto fabio_input = cvutils::read_grayscale("input-fabio.png");
   dst = cvutils::gaussian_blur(fabio_input, KSIZE);
   imwrite(outputGaussian, dst);
+
+  dst = cvutils::laplacian_blur(fabio_input, KSIZE);
+  imwrite(outputLaplacian, dst);
 }
 
 int main() {
