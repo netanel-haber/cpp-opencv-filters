@@ -44,7 +44,7 @@ Img op_on_windows(const Img& src, int ksize, std::function<uint8_t(std::vector<u
 template <typename T>
 Img convolve(const Img& src, const std::vector<T>& kernel) {
   auto ksize = static_cast<int>(floor(sqrt(kernel.size())));
-  return op_on_windows(src, ksize, [kernel](std::vector<uint8_t> window) {
+  return op_on_windows(src, ksize, [kernel](auto& window) {
     auto product = static_cast<uint8_t>(std::inner_product(window.begin(), window.end(), kernel.begin(), 0.0));
     return product;
   });
